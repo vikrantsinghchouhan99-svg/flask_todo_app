@@ -32,16 +32,8 @@ This project covers complete backend–frontend integration using Flask, databas
 
 flask_todo_app/
 │── app.py
-│── requirements.txt
 │── /templates
 │ └── index.html
-│── /static
-└── (optional files)
-
-yaml
-Copy code
-
----
 
 ## ⚙️ Installation & Setup
 
@@ -50,28 +42,9 @@ cd flask_todo_app
 pip install -r requirements.txt
 python app.py
 
-arduino
-Copy code
-
 App will run at:  
 http://127.0.0.1:5000/
 
-yaml
-Copy code
-
----
-
-## 📸 Screenshots
-
-_Add your screenshots here (UI, task actions, etc.)_
-
-Example:
-
-
-yaml
-Copy code
-
----
 
 ## 📌 About This Project
 
