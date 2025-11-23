@@ -1,1 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>My To-Do — Modern</title>
 
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root{
+            --accent-1: #5b8cff;   /* blue */
+            --accent-2: #7c4dff;   /* purple */
+            --card-bg: #ffffff;
+            --muted: #6b7280;
+        }
+        html,body{ height:100%; }
+        body{
+            font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            background: linear-gradient(180deg, #f7fbff 0%, #eef5ff 100%);
+            padding: 32px 12px;
+        }
+
+        .app-shell{
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .topbar{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:12px;
+            margin-bottom:18px;
+        }
+        .brand {
+            display:flex;
+            gap:12px;
+            align-items:center;
+        }
+        .logo {
+            width:48px;
+            height:48px;
+            border-radius:10px;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:white;
+            font-weight:700;
+            box-shadow: 0 6px 18px rgba(92,95,255,0.12);
+        }
+        .brand h1{
+            font-size:18px;
+            margin:0;
+            letter-spacing: -0.2px;
+        }
+        .brand p{
+            margin:0;
+            color:var(--muted);
+            font-size:12px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 14px;
+            overflow: hidden;
+        }
+        .card-head {
+            padding: 22px;
+            background: linear-gradient(90deg, rgba(91,140,255,0.12), rgba(124,77,255,0.08));
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:12px;
+        }
+        .card-body {
+            padding: 20px;
+            background: var(--card-bg);
+        }
+
+        .task-input {
+            display:flex;
+            gap:10px;
+        }
+        .task-input input.form-control{
+            border-radius: 10px;
+            box-shadow: none;
+            border: 1px solid rgba(15,23,42,0.06);
+        }
+        .btn-accent {
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+            border: none;
+            color: white;
+            box-shadow: 0 8px 30px rgba(91,140,255,0.12);
+            border-radius: 10px;
+        }
+
+        .list-group-item {
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(15,23,42,0.04);
+        }
+
+        .task-text {
+            font-weight: 500;
+            color: #0f172a;
+        }
+        .task-sub {
+            display:block;
+            color:var(--muted);
+            font-size:12px;
+        }
+
+        .badge-prio {
+            padding: .35em .55em;
+            border-radius: 8px;
+            font-size:11px;
+            font-weight:600;
+        }
+
+        .task-done {
+            text-decoration: line-through;
+            color: #9aa0a6;
+        }
+
+        .action-btn {
+            min-width:84px;
+        }
+
+        /* responsive */
+        @media (max-width:575px){
+            .task-input { flex-direction: column; }
+            .task-input .btn { width: 100%; }
+            .brand h1 { font-size:16px; }
+        }
+
+    </style>
+</head>
+<body>
+<div class="app-shell">
+
+    <div class="topbar">
+        <div class="brand">
+            <div class="logo">VT</div>
+            <div>
+                <h1>Vikrant — To-Do</h1>
+                <p>Daily Task Organizerp>
+            </div>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+            <small class="text-muted">Local demo</small>
+            <a class="btn btn-outline-secondary btn-sm" href="#" onclick="location.reload(); return false;">Refresh</a>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-head">
+            <div>
+                <h4 style="margin:0;">Today</h4>
+                <small class="text-muted">Quick capture your tasks — simple & fast</small>
+            </div>
+
+            <div>
+                <span class="badge badge-prio" style="background: linear-gradient(90deg,var(--accent-1),var(--accent-2)); color: white;">Active</span>
+            </div>
+        </div>
+
+        <div class="card-body">
+
+            <!-- Add Task Form -->
+            <form class="task-input mb-3" action="/add" method="POST">
+                <input type="text" name="task" class="form-control" placeholder="Write a new task (eg. Prepare internship demo)" required>
+                <button class="btn btn-accent" type="submit">Add</button>
+            </form>
+
+            <!-- Tasks list -->
+            <ul class="list-group">
+                {% if tasks|length == 0 %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="task-text">No tasks yet</div>
+                            <span class="task-sub">Add something to get started.</span>
+                        </div>
+                        <div>
+                            <small class="text-muted">—</small>
+                        </div>
+                    </li>
+                {% endif %}
+
+                {% for task in tasks %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="task-text {% if task.done %} task-done {% endif %}">{{ task.text }}</div>
+                        <span class="task-sub">ID: {{ task.id }} • {{ 'Done' if task.done else 'Pending' }}</span>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        {% if not task.done %}
+                            <a href="/done/{{ task.id }}" class="btn btn-sm action-btn btn-outline-success">Done ✔</a>
+                        {% else %}
+                            <button class="btn btn-sm action-btn btn-outline-secondary" disabled>Completed</button>
+                        {% endif %}
+                        <a href="/delete/{{ task.id }}" class="btn btn-sm action-btn btn-outline-danger">Delete ✖</a>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS (optional) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
